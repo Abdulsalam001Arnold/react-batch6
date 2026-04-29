@@ -11,7 +11,7 @@ export default function Homepage() {
     useEffect(() => {
       const fetchData = async () => {
         try {
-            const response = await fetch("https://dragonball-api.com/api/character")
+            const response = await fetch("https://dragonball-api.com/api/characters")
 
             if(!response.ok) {
                 toast.error("Failed to get a response from the server.")
