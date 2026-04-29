@@ -4,6 +4,7 @@ import { useState } from "react";
 import { api } from "../api/api";
 import { toast, ToastContainer } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
+import Loader from "../components/Loader.jsx";
 
 export default function SignupPage() {
     const [formData, setFormData] = useState({
@@ -11,6 +12,8 @@ export default function SignupPage() {
         email: "",
         password: ""
     })
+
+    const [loading, setLoading] = useState(false)
 
     const handleChange = (event) => {
         const {name, value} = event.target
@@ -23,7 +26,7 @@ export default function SignupPage() {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
-
+        setLoading(true)
         try {
             const response = await api.post("/post-user", formData)
             
@@ -44,8 +47,9 @@ export default function SignupPage() {
         } catch (err) {
             toast.error(err)
             throw new Error(err.message)
+        } finally {
+            setLoading(false)
         }
-
     }
 
     return(
@@ -76,7 +80,15 @@ export default function SignupPage() {
                 <input type="password" name="password" id="password" onChange={handleChange} value={formData.password} className="w-full border border-amber-50 focus:border-amber-200 focus:outline-none p-[10px] rounded-xl"/>
              </div>
 
-             <input type="submit" value="Sign-up" className="p-[10px] bg-blue-700 hover:bg-blue-500 text-white rounded-xl w-1/4" />
+
+             <div className="w-full flex flex-col items-center justify-center">
+                {loading ? (
+                    <Loader/>
+                ) : (
+                    <input type="submit" value="Sign-up" className="p-[10px] bg-blue-700 hover:bg-blue-500 text-white rounded-xl w-1/4" />
+                )}
+             </div>
+
           </motion.form>
           </AnimatePresence>
 
