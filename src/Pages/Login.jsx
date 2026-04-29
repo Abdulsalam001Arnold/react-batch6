@@ -6,42 +6,23 @@ import { api } from "../api/api";
 import { toast, ToastContainer } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-
+import { userStore } from "../store/userStore.js";
 export default function LoginPage() {
     const navigate = useNavigate()
-    const [formData, setFormData] = useState({
-        email: "",
-        password: ""
-    })
+    const {login} = userStore()
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
-    const handleChange = (event) => {
-        const {name, value} = event.target
-
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }))
-    }
 
     const handleSubmit = async (event) => {
         event.preventDefault()
 
         try {
-            const response = await api.post("/login", formData)
-            
-            const data = response.data
-
-            if(response.status != 201 && response.status != 200) {
-                toast.error(response.data.message || "Something went wrong, please try again!")
-            }
-
-            toast.success(response.data.message)
+            await login(email, password)
+            toast.success("Login successful")
             navigate("/")
-
-            setFormData({
-                email: "",
-                password: ""
-            })
+            setEmail("")
+            setPassword("")
 
         } catch (err) {
             toast.error(err)
@@ -65,12 +46,12 @@ export default function LoginPage() {
           </h1>
              <div className="flex flex-col gap-[5px] items-center md:flex-row">
                 <label htmlFor="email">Email:</label>
-                <input type="email" name="email" id="email" onChange={handleChange} value={formData.email} className="w-full border border-amber-50 focus:border-amber-200 focus:outline-none p-[10px] rounded-xl"/>
+                <input type="email" name="email" id="email" onChange={(e) => setEmail(e.target.value)} value={email} className="w-full border border-amber-50 focus:border-amber-200 focus:outline-none p-[10px] rounded-xl"/>
              </div>
 
              <div className="flex flex-col gap-[5px] items-center md:flex-row">
                 <label htmlFor="password">Password:</label>
-                <input type="password" name="password" id="password" onChange={handleChange} value={formData.password} className="w-full border border-amber-50 focus:border-amber-200 focus:outline-none p-[10px] rounded-xl"/>
+                <input type="password" name="password" id="password" onChange={(e) => setPassword(e.target.value)} value={password} className="w-full border border-amber-50 focus:border-amber-200 focus:outline-none p-[10px] rounded-xl"/>
              </div>
 
              <input type="submit" value="Login" className="p-[10px] bg-blue-700 hover:bg-blue-500 text-white rounded-xl w-1/4" />
